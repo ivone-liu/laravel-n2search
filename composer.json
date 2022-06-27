@@ -1,0 +1,30 @@
+{
+    "name": "ivone/n2search",
+    "description": "搜索插件",
+    "keywords": ["搜索","Laravel","分词"],
+    "authors": [
+        {
+            "name": "ivone",
+            "email": "i@ivone.me",
+            "homepage": "https://www.ivone.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "fukuball/jieba-php": "^0.33.0",
+        "phpunit/phpunit": "^9.5",
+        "overtrue/pinyin": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "N2Search\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "N2Search\\Tests\\": "tests/"
+        }
+    },
+    "license": "MIT"
+}
