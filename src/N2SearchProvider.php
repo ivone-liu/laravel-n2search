@@ -31,7 +31,7 @@ class N2SearchProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__ . '/../config/n2search.php', 'N2Search');
+        $this->mergeConfigFrom(__DIR__.'/../config/N2Search.php', 'N2Search');
 
         $this->app->singleton(N2Search::class, function () {
             return new N2Search(config('N2Search'));
