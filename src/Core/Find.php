@@ -17,24 +17,51 @@ class Find
 
     protected $db;
     protected $key;
-    protected $select;
-    protected $order;
-    protected $order_columns;
-    protected $page;
-    protected $size;
-    protected $where;
     protected $n2;
 
-    public function __construct(Builder $model, string $key, array $where, array $columns, string $order, array $order_columns, int $page, int $size, N2Search $n2) {
+    protected $query;
+
+    public function __construct(Builder $model, string $key, N2Search $n2) {
         $this->db = $model;
         $this->key = $key;
-        $this->where = $where;
-        $this->select = $columns;
-        $this->order = $order;
-        $this->order_columns = $order_columns;
-        $this->page = $page;
-        $this->size = $size;
         $this->n2 = $n2;
+
+        $this->query = $this->db;
+        $this->initQuery();
+    }
+
+    protected function initQuery() {
+        $redis = $this->n2->redisConnect();
+        $kv = $redis->get($this->key);
+        $ids = json_decode($kv, true);
+
+        $this->query = $this->query->select($this->select)->whereIn('id', $ids);
+    }
+
+    public function columns(array $select) {
+        $this->query = $this->query->select($select);
+    }
+
+    public function page(int $page, int $size) {
+        $this->query .= $this->query->skip(($this->page-1)*$this->size)->take($this->size);
+    }
+
+    public function where(array $where) {
+        if(count($where) == count($where, 1)){
+            $where = [$where];
+        }
+        foreach ($where as $item) {
+            $this->query = $this->query->where($item);
+        }
+    }
+
+    public function order($column, string $method = 'desc') {
+        if (is_string($column)) {
+            $column = [$column];
+        }
+        foreach ($column as $item) {
+            $this->query = $this->query->orderBy($item, $this->order);
+        }
     }
 
     /**
@@ -44,20 +71,14 @@ class Find
      * Time: 16:50
      * @return array|mixed
      */
-    public function muster() {
-        $redis = $this->n2->redisConnect();
-        $kv = $redis->get($this->key);
-        $ids = json_decode($kv, true);
-
-        $query = $this->db->select($this->select)->whereIn('id', $ids);
-        foreach ($this->where as $where) {
-            $query = $query->where($where);
-        }
-        foreach ($this->order_columns as $column) {
-            $query = $query->orderBy($column, $this->order);
-        }
-        $cluster = $query->skip(($this->page-1)*$this->size)->take($this->size)->get();
+    public function fetchMany() {
+        $cluster = $this->query->get();
         $cluster = $cluster->isEmpty() ? [] : $cluster->toArray();
+        return $cluster;
+    }
+
+    public function fetchOne() {
+        $cluster = $this->query->first();
         return $cluster;
     }
 
