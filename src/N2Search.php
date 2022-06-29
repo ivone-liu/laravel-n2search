@@ -17,7 +17,10 @@ class N2Search
     protected $redis;
     protected $stop_words = [];
 
-    public function __construct($config) {
+    public function __construct($config = '') {
+        if (empty($config)) {
+            $config = config("N2Search");
+        }
         $this->redis = [
             'host'              =>  $config['redis_host'],
             'port'              =>  $config['redis_port'],
