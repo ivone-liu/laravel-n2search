@@ -101,7 +101,7 @@ $bar = $this->output->createProgressBar($count);
 $n2 = new N2Search();
 $logs = YourModel::get()->toArray();
 foreach ($logs as $log) {
-    $n2->load(YourModel::query(), ['content'])->add_one($log['id']);
+    $n2->load(YourModel::query(), ['content'])->addOne($log['id']);
     $bar->advance();
 }
 
@@ -117,9 +117,9 @@ $n2->load(YourModel::query(), ['content'])->add_one($log['id']);
 ```text
 load(Model的Builder构造器,以及对应Model中要构建索引的字段);
 ```
-`add_one`是指仅添加一条数据，需要额外增加ID主键参数。
+`addOne`是指仅添加一条数据，需要额外增加ID主键参数。
 
-`add_batch`是可以一次性添加整个Model的所有数据，无需其他参数。
+`addBatch`是可以一次性添加整个Model的所有数据，无需其他参数。
 
 ### 🔍 关键词查询
 

@@ -39,7 +39,7 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function add_one(int $id) {
+    public function addOne(int $id) {
         $log = $this->db->where(['id'=>$id])->first()->toArray();
         foreach ($this->columns as $item) {
             if (!array_key_exists($item, $log)) {
@@ -60,7 +60,7 @@ class Load
      * @param $model
      * @param $columns
      */
-    public function add_batch() {
+    public function addBatch() {
         $base = ['id'];
         $columns = array_unique(array_merge($base, $this->columns));
 
