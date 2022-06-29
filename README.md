@@ -3,7 +3,7 @@
   <h1>Laravel N2Search</h1>
 
   <p>
-    为Laravel设计的分词。
+    为Laravel设计的分词搜索工具。
   </p>
 
 
@@ -17,7 +17,7 @@
 </p>
 
   <h4>
-    <a href="https://packagist.org/packages/ivone/n2search">Packagist</a>
+    <a href="https://packagist.org/packages/ivone/n2search">Find Me at Packagist</a>
   <span> · </span>
     <a href="https://github.com/ivone-liu/laravel-search/issues">Report Bug</a>
   </h4>
