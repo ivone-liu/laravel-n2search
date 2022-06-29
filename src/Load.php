@@ -59,7 +59,7 @@ class Load
             foreach ($columns as $column) {
                 $words = DataInteractive::cut($item[$column]);
                 foreach ($words as $word) {
-                    $this->save($word, $log);
+                    $this->save($word, $item);
                 }
             }
         }
