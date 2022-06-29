@@ -20,7 +20,8 @@ class N2Tools
     public static function getRedis() {
         $redis = new \Redis();
         $redis->pconnect(env('REDIS_HOST', '127.0.0.1'), env('REDIS_PORT', '6379'));
-        $redis->auth(env('REDIS_PASSWORD', '6379'));
+        $redis->auth(env('REDIS_PASSWORD', ''));
+        $redis->select(9);
         return $redis;
     }
 
