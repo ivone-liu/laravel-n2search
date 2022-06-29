@@ -25,27 +25,55 @@ class Find
         $this->db = $model;
         $this->key = $key;
         $this->n2 = $n2;
-
+        // 初始化查询语句
         $this->query = $this->db;
         $this->initQuery();
     }
 
+    /**
+     * Desc: 初始化查询
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     */
     protected function initQuery() {
         $redis = $this->n2->redisConnect();
         $kv = $redis->get($this->key);
         $ids = json_decode($kv, true);
 
-        $this->query = $this->query->select($this->select)->whereIn('id', $ids);
+        $this->query = $this->query->whereIn('id', $ids);
     }
 
+    /**
+     * Desc: 字段查询
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     * @param array $select
+     */
     public function columns(array $select) {
         $this->query = $this->query->select($select);
     }
 
+    /**
+     * Desc: 分页查询
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     * @param int $page
+     * @param int $size
+     */
     public function page(int $page, int $size) {
-        $this->query .= $this->query->skip(($this->page-1)*$this->size)->take($this->size);
+        $this->query .= $this->query->skip(($page-1)*$size)->take($size);
     }
 
+    /**
+     * Desc: 条件查询
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     * @param array $where
+     */
     public function where(array $where) {
         if(count($where) == count($where, 1)){
             $where = [$where];
@@ -55,17 +83,25 @@ class Find
         }
     }
 
+    /**
+     * Desc: 排序查询
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     * @param $column
+     * @param string $method
+     */
     public function order($column, string $method = 'desc') {
         if (is_string($column)) {
             $column = [$column];
         }
         foreach ($column as $item) {
-            $this->query = $this->query->orderBy($item, $this->order);
+            $this->query = $this->query->orderBy($item, $method);
         }
     }
 
     /**
-     * Desc: 读取
+     * Desc: 读取多条
      * Author: Ivone <i@ivone.me>
      * Date: 2022/6/27
      * Time: 16:50
@@ -77,6 +113,13 @@ class Find
         return $cluster;
     }
 
+    /**
+     * Desc: 读取一条
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 16:44
+     * @return mixed
+     */
     public function fetchOne() {
         $cluster = $this->query->first();
         return $cluster;
