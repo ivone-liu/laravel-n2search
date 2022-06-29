@@ -39,8 +39,8 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function add_one() {
-        $log = $this->db->first()->toArray();
+    public function add_one(int $id) {
+        $log = $this->db->where(['id'=>$id])->first()->toArray();
         foreach ($this->columns as $item) {
             if (!array_key_exists($item, $log)) {
                 continue;
