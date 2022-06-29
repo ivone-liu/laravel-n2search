@@ -8,6 +8,8 @@ return [
 
     'dict'              => 'big',
 
+    'job_work'          => 0,
+
     'stop_words'        =>  [
         '我',
         '的',
