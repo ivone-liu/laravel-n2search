@@ -26,7 +26,6 @@ class Find
         $this->key = $key;
         $this->n2 = $n2;
         // 初始化查询语句
-        $this->query = $this->db;
         $this->initQuery();
     }
 
@@ -41,7 +40,7 @@ class Find
         $kv = $redis->get($this->key);
         $ids = json_decode($kv, true);
 
-        $this->query = $this->query->whereIn('id', $ids);
+        $this->query = $this->db->whereIn('id', $ids);
     }
 
     /**
@@ -65,7 +64,7 @@ class Find
      * @param int $size
      */
     public function page(int $page, int $size) {
-        $this->query .= $this->query->skip(($page-1)*$size)->take($size);
+        $this->query = $this->query->skip(($page-1)*$size)->take($size);
         return $this;
     }
 
