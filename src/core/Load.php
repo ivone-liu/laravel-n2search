@@ -4,6 +4,7 @@ namespace N2Search\Core;
 
 use N2Search\Core\DataInteractive;
 use Illuminate\Database\Eloquent\Builder;
+use N2Search\N2Search;
 
 /**
  * Desc:

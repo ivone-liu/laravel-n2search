@@ -3,6 +3,7 @@
 namespace N2Search\Core;
 
 use Illuminate\Database\Eloquent\Builder;
+use N2Search\N2Search;
 use phpDocumentor\Reflection\Types\Integer;
 
 /**
