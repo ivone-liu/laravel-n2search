@@ -57,7 +57,7 @@ class Load
                 if (!array_key_exists($column, $item)) {
                     continue;
                 }
-                $words = DataInteractive::cut($log[$item]);
+                $words = DataInteractive::cut($item[$column]);
                 foreach ($words as $word) {
                     $this->save($word, $log);
                 }
