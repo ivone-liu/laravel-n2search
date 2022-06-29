@@ -68,6 +68,28 @@
 composer require ivone/n2search
 ```
 
+### 🎚️ 配置
+
+composer安装好之后，需要在`app/config/app.php`的`providers`数组中增加N2SearchProvider，如下。
+
+```php
+N2Search\N2SearchProvider::class,
+```
+
+然后执行`php artisan vendor:publish`发布N2Search的配置文件，如果成功，则会在`app/config/`目录中看到`N2Search.php`文件。
+
+```php
+return [
+    'redis_host'        => env('REDIS_HOST', '127.0.0.1'), // REDIS服务IP地址
+    'redis_password'    => env('REDIS_PASSWORD', null), // REDIS密码
+    'redis_port'        => env('REDIS_PORT', '6379'), // REDIS端口
+    'redis_db'          =>  9, // 给N2Search提供的可用REDIS库
+    'dict'              => 'big', // 分词词典，默认big，可选：small
+    'job_work'          => 0, // 启用队列支持，可在导入时选用，默认0关闭，可选：1开启
+    'stop_words'        =>  [] // 不分词词语配置
+];
+```
+
 ### 📈 开始构建索引
 
 你可以在你的Laravel项目中新建一个`Command`，用命令行形式把你的数据表重新构建成搜索索引。
@@ -85,4 +107,50 @@ foreach ($logs as $log) {
 
 $bar->finish();
 ```
+
+其中，这两行代码是导入生成搜索分词索引的。
+```shell
+$n2 = new N2Search();
+$n2->load(YourModel::query(), ['content'])->add_one($log['id']);
+```
+即
+```text
+load(Model的Builder构造器,以及对应Model中要构建索引的字段);
+```
+`add_one`是指仅添加一条数据，需要额外增加ID主键参数。
+
+`add_batch`是可以一次性添加整个Model的所有数据，无需其他参数。
+
+### 🔍 关键词查询
+
+在完成第一步导入数据之后，就可以尝试从已构建的分词索引中查询数据了。
+
+```php
+$n2 = new N2Search();
+$n2->find(YourModel::query(), '我')->columns(['name', 'degree'])->where(['user_id'=>1])->where(['relation_id'=>101])->page(1, 20)->order('id', 'desc')->fetchMany();
+$n2->find(YourModel::query(), '好的')->columns(['name', 'degree'])->where(['user_id'=>1])->order('id', 'desc')->fetchOne();
+```
+
+其中
+
+`fetchMany()`表示一次性读取多条数据，如Laravel get()
+
+`fetchOne()`表示一次只读一条数据，如Laravel first()
+
+查询主要参考了Laravel ORM的链式操作设计，可以多次绑定查询条件，并生成查询结果。N2Search的查询结果类型是**Array**。
+
+### 👏 完成
+
+基础查询已经完成，你可以拿到N2Search提供的查询结果做你想做的逻辑处理了，更高级的功能和使用会在下文中逐一介绍。
+
+## 💡 高级
+
+### 🔤 拼音
+开发中
+
+### 🏳️‍🌈 多语言
+开发中
+
+### 🧳 队列
+开发中
 
