@@ -19,10 +19,23 @@ class N2Tools
      */
     public static function getRedis() {
         $redis = new \Redis();
-        $redis->pconnect(env('REDIS_HOST', '127.0.0.1'), env('REDIS_PORT', '6379'));
-        $redis->auth(env('REDIS_PASSWORD', ''));
-        $redis->select(9);
+        $redis->pconnect(self::getConfig('redis_host'), self::getConfig('port'));
+        $redis->auth(self::getConfig('password'));
+        $redis->select(self::getConfig('db'));
         return $redis;
+    }
+
+    /**
+     * Desc: 读取配置
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/29
+     * Time: 14:03
+     * @param $key
+     * @return mixed
+     */
+    public static function getConfig($key) {
+        $config = config("N2Search.{$key}");
+        return $config;
     }
 
 }

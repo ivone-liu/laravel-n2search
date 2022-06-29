@@ -3,6 +3,7 @@
 namespace N2Search;
 
 use N2Search\Core\DataInteractive;
+use N2Search\Core\N2Tools;
 
 /**
  * Desc:
@@ -57,6 +58,10 @@ class Load
 
         foreach ($log as $item) {
             foreach ($columns as $column) {
+                if (!array_key_exists($column, $item)) {
+                    continue;
+                }
+
                 $words = DataInteractive::cut($item[$column]);
                 foreach ($words as $word) {
                     $this->save($word, $item);
@@ -74,6 +79,9 @@ class Load
      * @param $db_muster
      */
     protected function save($word, $db_muster) {
+        if (in_array(N2Tools::getConfig("stop_words"), $word)) {
+            return;
+        }
         $cut_data = DataInteractive::read($word);
         if (empty($cut_data)) {
             $ids = [$db_muster['id']];
