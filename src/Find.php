@@ -3,6 +3,8 @@
 namespace N2Search;
 
 use N2Search\Core\N2Tools;
+use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * Desc:
@@ -13,30 +15,43 @@ use N2Search\Core\N2Tools;
 class Find
 {
 
+    protected $db;
+    protected $key;
+    protected $select;
+    protected $order;
+    protected $order_columns;
+    protected $page;
+    protected $size;
+    protected $n2;
+
+    public function __construct(Model $model, String $key, Array $columns, String $order, Array $order_columns, Integer $page, Integer $size, N2Search $n2) {
+        $this->db = $model;
+        $this->key = $key;
+        $this->select = $columns;
+        $this->order = $order;
+        $this->order_columns = $order_columns;
+        $this->page = $page;
+        $this->size = $size;
+        $this->n2 = $n2;
+    }
+
     /**
      * Desc: 读取
      * Author: Ivone <i@ivone.me>
      * Date: 2022/6/27
      * Time: 16:50
-     * @param $model
-     * @param $key
-     * @param $select_columns
-     * @param $order
-     * @param $order_columns
-     * @param $page
-     * @param $size
      * @return array|mixed
      */
-    public function muster($model, $key, $select_columns = ["*"], $order = 'desc', $order_columns = ['id'], $page = 1 , $size = 20) {
+    public function muster() {
         $redis = N2Tools::getRedis();
-        $kv = $redis->get($key);
+        $kv = $redis->get($this->key);
         $ids = json_decode($kv, true);
 
-        $query = $model->select($select_columns)->whereIn('id', $ids);
-        foreach ($order_columns as $column) {
-            $query = $query->orderBy($column, $order);
+        $query = $this->db->select($this->select)->whereIn('id', $ids);
+        foreach ($this->order_columns as $column) {
+            $query = $query->orderBy($column, $this->order);
         }
-        $cluster = $query->skip(($page-1)*$size)->get();
+        $cluster = $query->skip(($this->page-1)*$this->size)->get();
         $cluster = $cluster->isEmpty() ? [] : $cluster->toArray();
         return $cluster;
     }

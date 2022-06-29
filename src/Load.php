@@ -4,6 +4,7 @@ namespace N2Search;
 
 use N2Search\Core\DataInteractive;
 use N2Search\Core\N2Tools;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Desc:
@@ -13,6 +14,17 @@ use N2Search\Core\N2Tools;
  */
 class Load
 {
+
+    protected $n2;
+    protected $db;
+    protected $columns;
+
+    public function __construct(Model $db_model, Array $columns, N2Search $n2) {
+        $this->db = $db_model;
+        $this->n2 = $n2;
+        $this->columns = $columns;
+    }
+
     /**
      * Desc: 增加一条
      * Author: Ivone <i@ivone.me>
@@ -25,9 +37,9 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function add_one($model, $columns = ['*']) {
-        $log = $model->first()->toArray();
-        foreach ($columns as $item) {
+    public function add_one() {
+        $log = $this->db->first()->toArray();
+        foreach ($this->columns as $item) {
             if (!array_key_exists($item, $log)) {
                 continue;
             }
@@ -46,11 +58,11 @@ class Load
      * @param $model
      * @param $columns
      */
-    public function add_batch($model, $columns = ['*']) {
+    public function add_batch() {
         $base = ['id'];
-        $columns = array_unique(array_merge($base, $columns));
+        $columns = array_unique(array_merge($base, $this->columns));
 
-        $log = $model->get();
+        $log = $this->db->get();
         $log = $log->isEmpty() ? [] : $log->toArray();
         if (empty($log)) {
             return;
