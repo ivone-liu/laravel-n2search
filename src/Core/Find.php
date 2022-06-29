@@ -53,6 +53,7 @@ class Find
      */
     public function columns(array $select) {
         $this->query = $this->query->select($select);
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ class Find
      */
     public function page(int $page, int $size) {
         $this->query .= $this->query->skip(($page-1)*$size)->take($size);
+        return $this;
     }
 
     /**
@@ -81,6 +83,7 @@ class Find
         foreach ($where as $item) {
             $this->query = $this->query->where($item);
         }
+        return $this;
     }
 
     /**
@@ -98,6 +101,7 @@ class Find
         foreach ($column as $item) {
             $this->query = $this->query->orderBy($item, $method);
         }
+        return $this;
     }
 
     /**
