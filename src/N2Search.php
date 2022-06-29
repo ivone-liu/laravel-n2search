@@ -36,8 +36,8 @@ class N2Search
         return new Load($model, $columns, $this);
     }
 
-    public function find($model, $key, $columns = ['*'], $order = 'desc', $order_columns = ['id'], $page = 1, $size = 20): Find {
-        return new Find($model, $key, $columns = ['*'], $order = 'desc', $order_columns = ['id'], $page = 1, $size = 20, $this);
+    public function find($model, $key, $where = [], $columns = ['*'], $order = 'desc', $order_columns = ['id'], $page = 1, $size = 20): Find {
+        return new Find($model, $key, $where, $columns, $order, $order_columns, $page, $size, $this);
     }
 
     public function getN2Config() {

@@ -22,11 +22,13 @@ class Find
     protected $order_columns;
     protected $page;
     protected $size;
+    protected $where;
     protected $n2;
 
-    public function __construct(Builder $model, string $key, array $columns, string $order, array $order_columns, int $page, int $size, N2Search $n2) {
+    public function __construct(Builder $model, string $key, array $where, array $columns, string $order, array $order_columns, int $page, int $size, N2Search $n2) {
         $this->db = $model;
         $this->key = $key;
+        $this->where = $where;
         $this->select = $columns;
         $this->order = $order;
         $this->order_columns = $order_columns;
@@ -48,6 +50,9 @@ class Find
         $ids = json_decode($kv, true);
 
         $query = $this->db->select($this->select)->whereIn('id', $ids);
+        foreach ($this->where as $where) {
+            $query = $query->where($where);
+        }
         foreach ($this->order_columns as $column) {
             $query = $query->orderBy($column, $this->order);
         }
