@@ -5,8 +5,6 @@
   <p>
     为Laravel设计的分词搜索工具。
   </p>
-
-
 <!-- Badges -->
 <p>
   <a target="_blank" href="https://ivone.me">
@@ -21,7 +19,9 @@
 </p>
 
   <h4>
-    <a href="https://packagist.org/packages/ivone/n2search">Find Me at Packagist</a>
+    <a href="https://github.com/ivone-liu/laravel-n2search" target="_blank">Github</a>
+  <span> · </span>
+    <a href="https://packagist.org/packages/ivone/n2search" target="_blank">Packagist</a>
   <span> · </span>
     <a href="https://github.com/ivone-liu/laravel-search/issues">Report Bug</a>
   </h4>
