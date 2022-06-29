@@ -34,7 +34,7 @@ class Find
 
         $query = $model->select($select_columns)->whereIn('id', $ids);
         foreach ($order_columns as $column) {
-            $query = $query->orderBy($order, $column);
+            $query = $query->orderBy($column, $order);
         }
         $cluster = $query->skip(($page-1)*$size)->get();
         $cluster = $cluster->isEmpty() ? [] : $cluster->toArray();
