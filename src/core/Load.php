@@ -3,7 +3,7 @@
 namespace N2Search\Core;
 
 use N2Search\Core\DataInteractive;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Desc:
@@ -19,7 +19,7 @@ class Load
     protected $columns;
     protected $n2_config;
 
-    public function __construct(Model $db_model, Array $columns, N2Search $n2) {
+    public function __construct(Builder $db_model, Array $columns, N2Search $n2) {
         $this->db = $db_model;
         $this->n2 = $n2;
         $this->columns = $columns;

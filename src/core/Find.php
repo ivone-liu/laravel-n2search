@@ -2,8 +2,7 @@
 
 namespace N2Search\Core;
 
-use N2Search\Core\N2Tools;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use phpDocumentor\Reflection\Types\Integer;
 
 /**
@@ -24,7 +23,7 @@ class Find
     protected $size;
     protected $n2;
 
-    public function __construct(Model $model, String $key, Array $columns, String $order, Array $order_columns, Integer $page, Integer $size, N2Search $n2) {
+    public function __construct(Builder $model, String $key, Array $columns, String $order, Array $order_columns, Integer $page, Integer $size, N2Search $n2) {
         $this->db = $model;
         $this->key = $key;
         $this->select = $columns;
