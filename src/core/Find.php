@@ -23,7 +23,7 @@ class Find
     protected $size;
     protected $n2;
 
-    public function __construct(Builder $model, String $key, Array $columns, String $order, Array $order_columns, Integer $page, Integer $size, N2Search $n2) {
+    public function __construct(Builder $model, string $key, array $columns, string $order, array $order_columns, int $page, int $size, N2Search $n2) {
         $this->db = $model;
         $this->key = $key;
         $this->select = $columns;
