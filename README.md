@@ -1,7 +1,7 @@
 
 <div align="center">
 <img src="logo.png" width="300" />
-  <h1>Laravel N²Search</h1>
+  <h1>Laravel N₂Search</h1>
   <p>
     为Laravel设计的分词搜索工具。
   </p>
