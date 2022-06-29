@@ -51,7 +51,7 @@ class Find
         foreach ($this->order_columns as $column) {
             $query = $query->orderBy($column, $this->order);
         }
-        $cluster = $query->skip(($this->page-1)*$this->size)->get();
+        $cluster = $query->skip(($this->page-1)*$this->size)->take($this->size)->get();
         $cluster = $cluster->isEmpty() ? [] : $cluster->toArray();
         return $cluster;
     }
