@@ -93,7 +93,7 @@ class Load
      * @param $db_muster
      */
     protected function save($word, $db_muster) {
-        if (in_array($this->n2_config["stop_words"], $word)) {
+        if (in_array($word, $this->n2_config["stop_words"])) {
             return;
         }
         $cut_data = DataInteractive::read($word, $this->n2);

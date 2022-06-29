@@ -8,7 +8,6 @@ return [
 
     'dict'              => 'big',
 
-
     'stop_words'        =>  [
         '我',
         '的',
