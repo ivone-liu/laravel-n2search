@@ -27,7 +27,7 @@ class Find
      * @param $size
      * @return array|mixed
      */
-    public static function muster($model, $key, $select_columns = ["*"], $order = 'desc', $order_columns = ['id'], $page = 1 , $size = 20) {
+    public function muster($model, $key, $select_columns = ["*"], $order = 'desc', $order_columns = ['id'], $page = 1 , $size = 20) {
         $redis = N2Tools::getRedis();
         $kv = $redis->get($key);
         $ids = json_decode($kv, true);

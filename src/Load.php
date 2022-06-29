@@ -46,7 +46,7 @@ class Load
      * @param $columns
      */
     public function add_batch($model, $columns = ['*']) {
-        $log = $model->first();
+        $log = $model->get();
         $log = $log->isEmpty() ? [] : $log->toArray();
         if (empty($log)) {
             return;
