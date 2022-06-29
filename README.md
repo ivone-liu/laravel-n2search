@@ -154,3 +154,8 @@ $n2->find(YourModel::query(), '好的')->columns(['name', 'degree'])->where(['us
 ### 🧳 队列
 开发中
 
+## 🧑🏻‍💻 联系我
+
+你可以在github中给我提issue，或者邮件联系我：i@ivone.me 
+
+友情链接:[方寸笔迹](https://www.fangcun.in)
