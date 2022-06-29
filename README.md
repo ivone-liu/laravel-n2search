@@ -12,8 +12,12 @@
   <a target="_blank" href="https://ivone.me">
     <img src="https://img.shields.io/badge/Author-Ivone-green" alt="Author" />
   </a>
-  <img src="https://img.shields.io/github/license/ivone-liu/laravel-search" />
-  <img src="https://img.shields.io/badge/status-testing-red" />
+  <a target="_blank" href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/github/license/ivone-liu/laravel-search" />
+  </a>
+  <a href="https://github.com/ivone-liu/laravel-search">
+    <img src="https://img.shields.io/badge/status-testing-red" />
+  </a>
 </p>
 
   <h4>
