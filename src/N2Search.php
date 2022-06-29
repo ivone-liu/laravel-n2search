@@ -8,6 +8,9 @@
 
 namespace N2Search;
 
+use N2Search\Core\Find;
+use N2Search\Core\Load;
+
 class N2Search
 {
 
@@ -18,7 +21,7 @@ class N2Search
         $this->redis = [
             'host'              =>  $config['redis_host'],
             'port'              =>  $config['redis_port'],
-            'redis_password'    =>  $config['redis_password'],
+            'password'          =>  $config['redis_password'],
             'db'                =>  $config['redis_db']
         ];
 
@@ -33,5 +36,17 @@ class N2Search
     public function find($model, $key, $columns = ['*'], $order = 'desc', $order_columns = ['id'], $page = 1, $size = 20): Find {
         return new Find($model, $key, $columns = ['*'], $order = 'desc', $order_columns = ['id'], $page = 1, $size = 20, $this);
     }
-    
+
+    public function getN2Config() {
+        return ['redis'=>$this->redis, 'stop_words'=>$this->stop_words, 'dict'=>$this->dict];
+    }
+
+    public function redisConnect(): \Redis {
+        $redis = new \Redis();
+        $redis->pconnect($this->redis['host'], $this->redis['port']);
+        $redis->auth($this->redis['password']);
+        $redis->select($this->redis['db']);
+        return $redis;
+    }
+
 }

@@ -1,9 +1,8 @@
 <?php
 
-namespace N2Search;
+namespace N2Search\Core;
 
 use N2Search\Core\DataInteractive;
-use N2Search\Core\N2Tools;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,11 +17,13 @@ class Load
     protected $n2;
     protected $db;
     protected $columns;
+    protected $n2_config;
 
     public function __construct(Model $db_model, Array $columns, N2Search $n2) {
         $this->db = $db_model;
         $this->n2 = $n2;
         $this->columns = $columns;
+        $this->n2_config = $n2->getN2Config();
     }
 
     /**
@@ -43,7 +44,7 @@ class Load
             if (!array_key_exists($item, $log)) {
                 continue;
             }
-            $words = DataInteractive::cut($log[$item]);
+            $words = DataInteractive::cut($log[$item], $this->n2->dict);
             foreach ($words as $word) {
                 $this->save($word, $log);
             }
@@ -91,10 +92,10 @@ class Load
      * @param $db_muster
      */
     protected function save($word, $db_muster) {
-        if (in_array(N2Tools::getConfig("stop_words"), $word)) {
+        if (in_array($this->n2_config["stop_words"], $word)) {
             return;
         }
-        $cut_data = DataInteractive::read($word);
+        $cut_data = DataInteractive::read($word, $this->n2);
         if (empty($cut_data)) {
             $ids = [$db_muster['id']];
         } else {
@@ -102,7 +103,7 @@ class Load
             array_push($ids, $db_muster['id']);
             $ids = array_unique($ids);
         }
-        DataInteractive::add($word, json_encode($ids));
+        DataInteractive::add($word, json_encode($ids), $this->n2);
     }
 
 }

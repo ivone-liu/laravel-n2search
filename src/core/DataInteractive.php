@@ -4,6 +4,7 @@ namespace N2Search\Core;
 
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Jieba;
+use N2Search\N2Search;
 
 /**
  * Desc:
@@ -25,7 +26,7 @@ class DataInteractive
      */
     public static function cut($content, $dict = '', $html_strap = 1) {
         Jieba::init([
-            'dict'      =>  !empty($dict) ? $dict : N2Tools::getConfig('dict'),
+            'dict'      =>  $dict,
             'cjk'       =>  'all'
         ]);
         Finalseg::init();
@@ -45,9 +46,10 @@ class DataInteractive
      * @param $key
      * @param $data
      */
-    public static function add($key, $data) {
-        $redis = N2Tools::getRedis();
+    public static function add($key, $data, N2Search $n2) {
+        $redis = $n2->redisConnect();
         $redis->set($key, $data);
+        return 1;
     }
 
     /**
@@ -58,8 +60,8 @@ class DataInteractive
      * @param $key
      * @return false|mixed|\Redis|string
      */
-    public static function read($key) {
-        $redis = N2Tools::getRedis();
+    public static function read($key, N2Search $n2) {
+        $redis = $n2->redisConnect();
         $kv = $redis->get($key);
         return $kv;
     }

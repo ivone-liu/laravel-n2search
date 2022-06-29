@@ -1,6 +1,6 @@
 <?php
 
-namespace N2Search;
+namespace N2Search\Core;
 
 use N2Search\Core\N2Tools;
 use Illuminate\Database\Eloquent\Model;
@@ -43,7 +43,7 @@ class Find
      * @return array|mixed
      */
     public function muster() {
-        $redis = N2Tools::getRedis();
+        $redis = $this->n2->redisConnect();
         $kv = $redis->get($this->key);
         $ids = json_decode($kv, true);
 
