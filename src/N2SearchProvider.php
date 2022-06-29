@@ -21,7 +21,7 @@ class N2SearchProvider extends ServiceProvider
     {
         // 发布配置文件
         $this->publishes([
-            __DIR__.'/config/N2Search.php' => config_path('n2search.php'),
+            __DIR__.'/../config/N2Search.php' => config_path('N2Search.php'),
         ]);
     }
 
