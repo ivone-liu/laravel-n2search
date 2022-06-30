@@ -2,9 +2,9 @@
 
 namespace N2Search\Core;
 
-use N2Search\Core\DataInteractive;
 use Illuminate\Database\Eloquent\Builder;
 use N2Search\N2Search;
+use Overtrue\Pinyin\Pinyin;
 
 /**
  * Desc:
@@ -39,7 +39,7 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function addOne(int $id) {
+    public function addOne(int $id, $need_pinyin = 0) {
         $log = $this->db->where(['id'=>$id])->first()->toArray();
         foreach ($this->columns as $item) {
             if (!array_key_exists($item, $log)) {
@@ -47,6 +47,12 @@ class Load
             }
             $words = DataInteractive::cut($log[$item], $this->n2->dict);
             foreach ($words as $word) {
+                if (!empty($need_pinyin)) {
+                    $pinyin_cut = $this->pinyin($word);
+                    foreach ($pinyin_cut as $pinyin) {
+                        $this->save($pinyin, $log);
+                    }
+                }
                 $this->save($word, $log);
             }
         }
@@ -60,7 +66,7 @@ class Load
      * @param $model
      * @param $columns
      */
-    public function addBatch() {
+    public function addBatch($need_pinyin = 0) {
         $base = ['id'];
         $columns = array_unique(array_merge($base, $this->columns));
 
@@ -78,6 +84,12 @@ class Load
 
                 $words = DataInteractive::cut($item[$column]);
                 foreach ($words as $word) {
+                    if (!empty($need_pinyin)) {
+                        $pinyin_cut = $this->pinyin($word);
+                        foreach ($pinyin_cut as $pinyin) {
+                            $this->save($pinyin, $log);
+                        }
+                    }
                     $this->save($word, $item);
                 }
             }
@@ -105,6 +117,19 @@ class Load
             $ids = array_unique($ids);
         }
         DataInteractive::add($word, json_encode($ids), $this->n2);
+    }
+
+    /**
+     * Desc: 转拼音
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/6/30
+     * Time: 9:14
+     * @param $word
+     */
+    protected function pinyin($word) {
+        $pinyin = new Pinyin();
+        $cut = $pinyin->convert($word);
+        return $cut;
     }
 
 }
