@@ -1,6 +1,6 @@
 
 <div align="center">
-<img src="logo.png" width="300" />
+<img src="logo.png" width="240" />
   <h1>Laravel N₂Search</h1>
   <p>
     为Laravel设计的分词搜索工具
@@ -97,7 +97,7 @@ return [
 
 ### 📈 开始构建索引
 
-你可以在你的Laravel项目中新建一个`Command`，用命令行形式把你的数据表重新构建成搜索索引。
+你可以在你的Laravel项目中新建一个`Command`，用命令行形式把你的数据表重新构建成搜索索引，便于你自定义你的索引关系。
 
 ```php
 $count = YourModel::count();
@@ -113,7 +113,13 @@ foreach ($logs as $log) {
 $bar->finish();
 ```
 
-其中，这两行代码是导入生成搜索分词索引的。
+或者直接执行N2Search自带的`Command`
+
+```shell
+php artisan n2search:build {Your Model Class:App\\Model\\LogModel(etc)}
+```
+
+其中，以下两行代码是导入生成搜索分词索引的。
 ```shell
 $n2 = new N2Search();
 $n2->load(YourModel::query(), ['content'])->add_one($log['id']);
@@ -150,6 +156,12 @@ $n2->find(YourModel::query(), '好的')->columns(['name', 'degree'])->where(['us
 $n2 = new N2Search();
 $n2->clear()->flush();
 $n2->clear()->remove($key1, $key2, $key3 ...);
+```
+
+或者直接执行N2Search自带的`Command`全部清理。
+
+```shell
+php artisan n2search:clear
 ```
 
 `flush` 方法对应 Redis 中的 `flushdb`方法，清空在配置中 redis_db 中的所有内容
