@@ -55,11 +55,16 @@ class Import extends Command
         $page = 1;
         $size = 1000;
         while(1) {
-            $notes = $model::skip(($page-1)*$size)->take($size)->get()->toArray();
-            foreach ($notes as $note) {
-                $n2->load($model::query(), ['note'])->addOne($note['id']);
+            $logs = $model::skip(($page-1)*$size)->take($size)->get();
+            if ($logs->isEmpty()) {
+                break;
+            }
+            $logs = $logs->toArray();
+            foreach ($logs as $log) {
+                $n2->load($model::query(), ['note'])->addOne($log['id']);
                 $bar->advance();
             }
+            $page += 1;
         }
 
         $bar->finish();

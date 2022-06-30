@@ -3,6 +3,7 @@
 namespace N2Search\Core;
 
 use Illuminate\Database\Eloquent\Builder;
+use N2Search\Jobs\ImportJob;
 use N2Search\N2Search;
 use Overtrue\Pinyin\Pinyin;
 
@@ -39,7 +40,11 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function addOne(int $id, $need_pinyin = 0) {
+    public function addOne(int $id, $need_pinyin = 0, $need_queue = 0) {
+        if ($need_queue == 1) {
+            ImportJob::dispatch($this, $id, $need_pinyin)->onQueue("n2_build");
+            return;
+        }
         $log = $this->db->where(['id'=>$id])->first()->toArray();
         foreach ($this->columns as $item) {
             if (!array_key_exists($item, $log)) {
@@ -66,33 +71,44 @@ class Load
      * @param $model
      * @param $columns
      */
-    public function addBatch($need_pinyin = 0) {
+    public function addBatch($need_pinyin = 0, $need_queue = 0) {
         $base = ['id'];
-        $columns = array_unique(array_merge($base, $this->columns));
+        $this->columns = array_unique(array_merge($base, $this->columns));
 
-        $log = $this->db->get();
-        $log = $log->isEmpty() ? [] : $log->toArray();
-        if (empty($log)) {
-            return;
-        }
+        $page = 1;
+        $size = 1000;
 
-        foreach ($log as $item) {
-            foreach ($columns as $column) {
-                if (!array_key_exists($column, $item)) {
-                    continue;
-                }
+        while(1) {
+            $log = $this->db->skip(($page-1)*$size)->take($size)->get();
+            if ($log->isEmpty()) {
+                break;
+            }
+            $log = $log->toArray();
 
-                $words = DataInteractive::cut($item[$column]);
-                foreach ($words as $word) {
-                    if (!empty($need_pinyin)) {
-                        $pinyin_cut = $this->pinyin($word);
-                        foreach ($pinyin_cut as $pinyin) {
-                            $this->save($pinyin, $log);
-                        }
+            if ($need_queue == 1) {
+                ImportJob::dispatch($this, 0, $need_pinyin, 1, $log)->onQueue("n2_build");
+                continue;
+            }
+
+            foreach ($log as $item) {
+                foreach ($this->columns as $column) {
+                    if (!array_key_exists($column, $item)) {
+                        continue;
                     }
-                    $this->save($word, $item);
+
+                    $words = DataInteractive::cut($item[$column]);
+                    foreach ($words as $word) {
+                        if (!empty($need_pinyin)) {
+                            $pinyin_cut = $this->pinyin($word);
+                            foreach ($pinyin_cut as $pinyin) {
+                                $this->save($pinyin, $log);
+                            }
+                        }
+                        $this->save($word, $item);
+                    }
                 }
             }
+            $page += 1;
         }
     }
 
