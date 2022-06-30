@@ -125,15 +125,7 @@ class Load
         if (in_array($word, $this->n2_config["stop_words"])) {
             return;
         }
-        $cut_data = DataInteractive::read($word, $this->n2);
-        if (empty($cut_data)) {
-            $ids = [$db_muster['id']];
-        } else {
-            $ids = json_decode($cut_data, true);
-            array_push($ids, $db_muster['id']);
-            $ids = array_unique($ids);
-        }
-        DataInteractive::add($word, json_encode($ids), $this->n2);
+        DataInteractive::add($word, $db_muster['id'], $this->n2);
     }
 
     /**

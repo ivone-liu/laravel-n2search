@@ -48,7 +48,7 @@ class DataInteractive
      */
     public static function add($key, $data, N2Search $n2) {
         $redis = $n2->redisConnect();
-        $redis->set($key, $data);
+        $redis->sAdd ($key, $data);
         return 1;
     }
 
@@ -62,8 +62,8 @@ class DataInteractive
      */
     public static function read($key, N2Search $n2) {
         $redis = $n2->redisConnect();
-        $kv = $redis->get($key);
-        return $kv;
+        $members = $redis->sMembers($key);
+        return $members;
     }
 
     public static function delete(N2Search $n2) {

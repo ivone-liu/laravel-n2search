@@ -36,8 +36,7 @@ class Find
      */
     protected function initQuery() {
         $redis = $this->n2->redisConnect();
-        $kv = $redis->get($this->key);
-        $ids = json_decode($kv, true);
+        $ids = $redis->get($this->key);
 
         $this->query = $this->db->whereIn('id', $ids);
     }
