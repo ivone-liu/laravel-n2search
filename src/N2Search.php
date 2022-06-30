@@ -57,4 +57,6 @@ class N2Search
         return $redis;
     }
 
+    function __destruct() {}
+    
 }
