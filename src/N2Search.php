@@ -8,6 +8,7 @@
 
 namespace N2Search;
 
+use N2Search\Core\Clear;
 use N2Search\Core\Find;
 use N2Search\Core\Load;
 
@@ -38,6 +39,10 @@ class N2Search
 
     public function find($model, $key): Find {
         return new Find($model, $key, $this);
+    }
+
+    public function clear(): Clear {
+        return new Clear($this);
     }
 
     public function getN2Config() {

@@ -144,6 +144,18 @@ $n2->find(YourModel::query(), '好的')->columns(['name', 'degree'])->where(['us
 
 查询主要参考了Laravel ORM的链式操作设计，可以多次绑定查询条件，并生成查询结果。N2Search的查询结果类型是**Array**。
 
+### 🗑 删除/清理
+
+```php
+$n2 = new N2Search();
+$n2->clear()->flush();
+$n2->clear()->remove($key1, $key2, $key3 ...);
+```
+
+`flush` 方法对应 Redis 中的 `flushdb`方法，清空在配置中 redis_db 中的所有内容
+
+`remove` 是删除指定关键词，其中的$key参数可传任意长度
+
 ### 👏 完成
 
 基础查询已经完成，你可以拿到N2Search提供的查询结果做你想做的逻辑处理了，更高级的功能和使用会在下文中逐一介绍。

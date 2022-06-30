@@ -66,7 +66,9 @@ class DataInteractive
         return $kv;
     }
 
-    public static function delete() {}
+    public static function delete(N2Search $n2) {
+
+    }
 
 
 }
