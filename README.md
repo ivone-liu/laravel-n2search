@@ -122,7 +122,7 @@ php artisan n2search:build {Your Model Class:App\\Model\\LogModel(etc)}
 其中，以下两行代码是导入生成搜索分词索引的。
 ```shell
 $n2 = new N2Search();
-$n2->load(YourModel::query(), ['content'])->add_one($log['id']);
+$n2->load(YourModel::query(), ['content'])->addOne($log['id']);
 ```
 即
 ```text
@@ -195,10 +195,10 @@ $n2->load(YourModel::query(), ['content'])->addOne($log['id'], 1);
 ### 🧮 权重计算
 开发中
 
-[//]: # (## 🧑🏻‍💻 联系我)
+## 🧑🏻‍💻 联系我
 
-[//]: # ()
-[//]: # (你可以在github中给我提issue，或者邮件联系我：i@ivone.me )
 
-[//]: # ()
-[//]: # (友情链接:[方寸笔迹]&#40;https://www.fangcun.in&#41;)
+你可以在github中给我提issue，或者邮件联系我：i@ivone.me 
+
+
+友情链接:[方寸笔迹](https://www.fangcun.in)
