@@ -163,7 +163,13 @@ $n2->clear()->remove($key1, $key2, $key3 ...);
 ## 💡 高级
 
 ### 🔤 拼音
-开发中
+参考[开始构建索引](https://github.com/ivone-liu/laravel-n2search#-%E5%BC%80%E5%A7%8B%E6%9E%84%E5%BB%BA%E7%B4%A2%E5%BC%95)
+
+在`addOne()`方法中，第二个参数作为中文转拼音的识别参数，即
+```php
+$n2->load(YourModel::query(), ['content'])->addOne($log['id'], 1);
+```
+表示提供拼音转化，并计算生成拼音对应的索引。同样适用于`addBatch(1)`。
 
 ### 🏳️‍🌈 多语言
 开发中
