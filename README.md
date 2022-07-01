@@ -122,7 +122,7 @@ php artisan n2search:build {Your Model Class:App\\Model\\LogModel(etc)}
 其中，以下两行代码是导入生成搜索分词索引的。
 ```shell
 $n2 = new N2Search();
-$n2->load(YourModel::query(), ['content'])->addOne($log['id']);
+$n2->load(YourModel::class, ['content'])->addOne($log['id']);
 ```
 即
 ```text
@@ -138,8 +138,8 @@ load(Model的Builder构造器,以及对应Model中要构建索引的字段);
 
 ```php
 $n2 = new N2Search();
-$n2->find(YourModel::query(), '我')->columns(['name', 'degree'])->where(['user_id'=>1])->where(['relation_id'=>101])->page(1, 20)->order('id', 'desc')->fetchMany();
-$n2->find(YourModel::query(), '好的')->columns(['name', 'degree'])->where(['user_id'=>1])->order('id', 'desc')->fetchOne();
+$n2->find(YourModel::class, '我')->columns(['name', 'degree'])->where(['user_id'=>1])->where(['relation_id'=>101])->page(1, 20)->order('id', 'desc')->fetchMany();
+$n2->find(YourModel::class, '好的')->columns(['name', 'degree'])->where(['user_id'=>1])->order('id', 'desc')->fetchOne();
 ```
 
 其中
@@ -179,7 +179,7 @@ php artisan n2search:clear
 
 在`addOne()`方法中，第二个参数作为中文转拼音的识别参数，即
 ```php
-$n2->load(YourModel::query(), ['content'])->addOne($log['id'], 1);
+$n2->load(YourModel::class, ['content'])->addOne($log['id'], 1);
 ```
 表示提供拼音转化，并计算生成拼音对应的索引。同样适用于`addBatch(1)`。
 
