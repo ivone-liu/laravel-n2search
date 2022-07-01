@@ -35,10 +35,10 @@ class Find
      * Time: 16:44
      */
     protected function initQuery() {
-        $redis = $this->n2->redisConnect();
-        $ids = $redis->get($this->key);
-
-        $this->query = $this->db->whereIn('id', $ids);
+        $ids = DataInteractive::read($this->key, $this->n2);
+        if (!empty($ids)) {
+            $this->query = $this->db->whereIn('id', $ids);
+        }
     }
 
     /**
