@@ -14,15 +14,17 @@ use N2Search\N2Search;
 class Find
 {
 
-    protected $db;
+    protected $class;
     protected $key;
     protected $n2;
+    protected $db;
 
     protected $query;
 
-    public function __construct(Builder $model, string $key, N2Search $n2) {
-        $this->db = $model;
+    public function __construct($model, string $key, N2Search $n2) {
+        $this->class = $model;
         $this->key = $key;
+        $this->db = new $this->class;
         $this->n2 = $n2;
         // 初始化查询语句
         $this->initQuery();
