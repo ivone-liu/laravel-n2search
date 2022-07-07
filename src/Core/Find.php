@@ -26,7 +26,7 @@ class Find
 
     public function __construct($model, string $key, N2Search $n2) {
         $this->class = $model;
-        $this->search_key = $key;
+        $this->search_key = str_replace(trim($key), ' ', '');
         $this->db = new $this->class;
         $this->n2 = $n2;
 

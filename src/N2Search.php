@@ -31,6 +31,7 @@ class N2Search
 
         $this->stop_words = $config['stop_words'];
         $this->dict = $config['dict'];
+        $this->pinyin = $config['pinyin'];
     }
 
     public function load($model, $columns): Load {
@@ -46,7 +47,7 @@ class N2Search
     }
 
     public function getN2Config() {
-        return ['redis'=>$this->redis, 'stop_words'=>$this->stop_words, 'dict'=>$this->dict];
+        return ['redis'=>$this->redis, 'stop_words'=>$this->stop_words, 'dict'=>$this->dict, 'pinyin'=>$this->pinyin];
     }
 
     public function redisConnect(): \Redis {

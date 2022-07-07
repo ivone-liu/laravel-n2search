@@ -92,6 +92,14 @@ class Load
         }
     }
 
+    /**
+     * Desc: 分词
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/7
+     * Time: 16:56
+     * @param $obj
+     * @param $column
+     */
     protected function curForWords($obj, $column) {
         if (!array_key_exists($column, $obj)) {
             return;
@@ -101,7 +109,7 @@ class Load
         foreach ($words as $word) {
             if (!empty($need_pinyin)) {
                 $pinyin_cut = $this->pinyin($word);
-                // 拼音优化
+                DataInteractive::add(implode('', $pinyin_cut), $word, $this->n2);
             }
             $this->save($word, $obj);
         }
