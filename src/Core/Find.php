@@ -38,9 +38,7 @@ class Find
      */
     protected function initQuery() {
         $ids = DataInteractive::read($this->key, $this->n2);
-        if (!empty($ids)) {
-            $this->query = $this->db->whereIn('id', $ids);
-        }
+        $this->query = $this->db->whereIn('id', $ids);
     }
 
     /**
