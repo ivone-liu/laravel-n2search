@@ -46,7 +46,11 @@ class Load
             ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, $need_pinyin, 0)->onQueue("n2_build");
             return;
         }
-        $log = $this->db->where(['id'=>$id])->first()->toArray();
+        $log = $this->db->where(['id'=>$id])->first();
+        if (empty($log)) {
+            return;
+        }
+        $log = $log->toArray();
         foreach ($this->columns as $item) {
             $this->curForWords($log, $item);
         }
@@ -101,8 +105,8 @@ class Load
             }
             $this->save($word, $obj);
         }
-        $analysis = DataInteractive::analysis($sentence);
-        DataInteractive::add($obj['id']."_".$column."_ans", $analysis, $this->n2);
+        $analysis = DataInteractive::analysis($sentence, $this->n2_config['dict']);
+        DataInteractive::add($obj['id']."_".$column."_ans", json_encode($analysis, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $this->n2);
     }
 
     /**

@@ -46,7 +46,16 @@ class DataInteractive
      * Time: 14:19
      * @param $content
      */
-    public static function analysis($content) {
+    public static function analysis($content, $dict, $strip_html = 1) {
+        if ($strip_html == 1) {
+            $content = strip_tags($content);
+        }
+        Jieba::init([
+            'dict'      =>  $dict,
+            'cjk'       =>  'all'
+        ]);
+        Finalseg::init();
+        JiebaAnalyse::init();
         return JiebaAnalyse::extractTags($content);
     }
 
