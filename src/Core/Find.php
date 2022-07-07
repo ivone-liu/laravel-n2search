@@ -2,6 +2,7 @@
 
 namespace N2Search\Core;
 
+use Fukuball\Jieba\Jieba;
 use Illuminate\Database\Eloquent\Builder;
 use N2Search\N2Search;
 
@@ -15,19 +16,29 @@ class Find
 {
 
     protected $class;
-    protected $key;
+    protected $search_key;
+    protected $keys;
     protected $n2;
     protected $db;
+    protected $select;
 
     protected $query;
 
     public function __construct($model, string $key, N2Search $n2) {
         $this->class = $model;
-        $this->key = $key;
+        $this->search_key = $key;
         $this->db = new $this->class;
         $this->n2 = $n2;
+
+        // 初始化关键词
+        $this->initKeys();
         // 初始化查询语句
         $this->initQuery();
+    }
+
+    protected function initKeys() {
+        $keys = Jieba::cutForSearch($this->search_key);
+        $this->keys = $keys;
     }
 
     /**
@@ -37,7 +48,13 @@ class Find
      * Time: 16:44
      */
     protected function initQuery() {
-        $ids = DataInteractive::read($this->key, $this->n2);
+        $ids = [];
+        foreach ($this->keys as $key) {
+            $key_rel = DataInteractive::read($key, $this->n2);
+            array_push($ids, $key_rel);
+        }
+        $ids = array_filter($ids);
+        $ids = array_unique($ids);
         $this->query = $this->db->whereIn('id', $ids);
     }
 
@@ -49,6 +66,7 @@ class Find
      * @param array $select
      */
     public function columns(array $select) {
+        $this->select = $select;
         $this->query = $this->query->select($select);
         return $this;
     }
@@ -124,6 +142,31 @@ class Find
     public function fetchOne() {
         $cluster = $this->query->first();
         return $cluster;
+    }
+
+    /**
+     * Desc: 分析排序
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/7
+     * Time: 15:27
+     * @param $docs
+     * @return mixed|void
+     */
+    public function getAnalysis($docs) {
+        if (empty($this->select)) {
+            return $docs;
+        }
+        foreach ($docs as $key=>$doc) {
+            foreach ($this->select as $item) {
+                $analysis = DataInteractive::read($doc['id']."_".$item."_ans");
+                foreach ($analysis as $k=>$weight) {
+                    if (in_array($k, $this->keys)) {
+                        $docs[$key]['n2_weight'] += $weight;
+                    }
+                }
+            }
+        }
+        return $docs;
     }
 
 }

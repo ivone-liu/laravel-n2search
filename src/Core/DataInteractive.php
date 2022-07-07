@@ -4,6 +4,7 @@ namespace N2Search\Core;
 
 use Fukuball\Jieba\Finalseg;
 use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\JiebaAnalyse;
 use N2Search\N2Search;
 
 /**
@@ -34,8 +35,31 @@ class DataInteractive
         if ($html_strap) {
             $content = strip_tags($content);
         }
-        $cut = Jieba::cutForSearch($content);
+        $cut = Jieba::cut($content);
         return $cut;
+    }
+
+    /**
+     * Desc: TFIDF分析
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/7
+     * Time: 14:19
+     * @param $content
+     */
+    public static function analysis($content) {
+        return JiebaAnalyse::extractTags($content);
+    }
+
+    /**
+     * Desc: 分词后的衍生词
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/7
+     * Time: 14:56
+     * @param $key
+     * @return array
+     */
+    public static function derive($key) {
+        return Jieba::cutForSearch($key);
     }
 
     /**

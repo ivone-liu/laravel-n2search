@@ -48,19 +48,7 @@ class Load
         }
         $log = $this->db->where(['id'=>$id])->first()->toArray();
         foreach ($this->columns as $item) {
-            if (!array_key_exists($item, $log)) {
-                continue;
-            }
-            $words = DataInteractive::cut($log[$item], $this->n2->dict);
-            foreach ($words as $word) {
-                if (!empty($need_pinyin)) {
-                    $pinyin_cut = $this->pinyin($word);
-                    foreach ($pinyin_cut as $pinyin) {
-                        $this->save($pinyin, $log);
-                    }
-                }
-                $this->save($word, $log);
-            }
+            $this->curForWords($log, $item);
         }
     }
 
@@ -93,24 +81,28 @@ class Load
 
             foreach ($log as $item) {
                 foreach ($this->columns as $column) {
-                    if (!array_key_exists($column, $item)) {
-                        continue;
-                    }
-
-                    $words = DataInteractive::cut($item[$column]);
-                    foreach ($words as $word) {
-                        if (!empty($need_pinyin)) {
-                            $pinyin_cut = $this->pinyin($word);
-                            foreach ($pinyin_cut as $pinyin) {
-                                $this->save($pinyin, $log);
-                            }
-                        }
-                        $this->save($word, $item);
-                    }
+                    $this->curForWords($item, $column);
                 }
             }
             $page += 1;
         }
+    }
+
+    protected function curForWords($obj, $column) {
+        if (!array_key_exists($column, $obj)) {
+            return;
+        }
+        $sentence = $obj[$column];
+        $words = DataInteractive::cut($sentence, $this->n2_config['dict']);
+        foreach ($words as $word) {
+            if (!empty($need_pinyin)) {
+                $pinyin_cut = $this->pinyin($word);
+                // 拼音优化
+            }
+            $this->save($word, $obj);
+        }
+        $analysis = DataInteractive::analysis($sentence);
+        DataInteractive::add($obj['id']."_".$column."_ans", $analysis, $this->n2);
     }
 
     /**
@@ -139,6 +131,17 @@ class Load
         $pinyin = new Pinyin();
         $cut = $pinyin->convert($word);
         return $cut;
+    }
+
+    /**
+     * Desc: 分词后的BXN
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/7
+     * Time: 15:00
+     * @param $word
+     */
+    protected function bxnForKey($word) {
+
     }
 
 }
