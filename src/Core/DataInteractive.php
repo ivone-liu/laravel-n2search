@@ -25,7 +25,7 @@ class DataInteractive
      * @param $dict 默认用最大词典，完全切割
      * @param $html_strap 默认认为content是html标记
      */
-    public static function cut($content, $dict, $html_strap = 1) {
+    public static function cut($content, $html_strap = 1) {
         if ($html_strap) {
             $content = strip_tags($content);
         }
@@ -40,7 +40,7 @@ class DataInteractive
      * Time: 14:19
      * @param $content
      */
-    public static function analysis($content, $dict, $strip_html = 1) {
+    public static function analysis($content, $strip_html = 1) {
         if ($strip_html == 1) {
             $content = strip_tags($content);
         }

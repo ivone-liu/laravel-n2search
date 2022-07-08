@@ -20,6 +20,7 @@ class Load
     protected $columns;
     protected $n2_config;
     protected $db_class;
+    protected $model_primary_key;
 
     public function __construct($db_class, array $columns, N2Search $n2) {
         $this->db_class = $db_class;
@@ -27,6 +28,7 @@ class Load
         $this->n2 = $n2;
         $this->columns = $columns;
         $this->n2_config = $n2->getN2Config();
+        $this->model_primary_key = $this->db->getKeyName();
     }
 
     /**
@@ -46,7 +48,7 @@ class Load
             ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, 0)->onQueue("n2_build");
             return;
         }
-        $log = $this->db->where(['id'=>$id])->first();
+        $log = $this->db->where([$this->model_primary_key=>$id])->first();
         if (empty($log)) {
             return;
         }
@@ -65,7 +67,7 @@ class Load
      * @param $columns
      */
     public function addBatch($need_queue = 0) {
-        $base = ['id'];
+        $base = [$this->model_primary_key];
         $this->columns = array_unique(array_merge($base, $this->columns));
 
         $page = 1;
@@ -105,16 +107,16 @@ class Load
             return;
         }
         $sentence = $obj[$column];
-        $words = DataInteractive::cut($sentence, $this->n2_config['dict']);
+        $words = $this->n2->jieba->getTokens($sentence);
         foreach ($words as $word) {
             if (!empty($this->n2_config['pinyin'])) {
-                $pinyin_cut = $this->pinyin($word);
+                $pinyin_cut = $this->pinyin(mb_strtolower($word));
                 DataInteractive::add(implode('', $pinyin_cut), $word, $this->n2);
             }
             $this->save($word, $obj);
         }
-        $analysis = DataInteractive::analysis($sentence, $this->n2_config['dict']);
-        DataInteractive::add($obj['id']."_".$column."_ans", json_encode($analysis, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $this->n2);
+        $analysis = $this->n2->jieba->analysis($sentence);
+        DataInteractive::add($obj[$this->model_primary_key]."_".$column."_ans", json_encode($analysis, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $this->n2);
     }
 
     /**
@@ -129,7 +131,7 @@ class Load
         if (in_array($word, $this->n2_config["stop_words"])) {
             return;
         }
-        DataInteractive::add($word, $db_muster['id'], $this->n2);
+        DataInteractive::add($word, $db_muster[$this->model_primary_key], $this->n2);
     }
 
     /**

@@ -23,6 +23,8 @@ class N2SearchProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/N2Search.php' => config_path('N2Search.php'),
         ]);
+
+        $this->app->singleton(JiebaTokenizer::class, config("N2Search.php"));
     }
 
     /**

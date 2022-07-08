@@ -22,14 +22,17 @@ class Find
     protected $db;
     protected $select;
     protected $cluster;
+    protected $model_primary_key;
 
     protected $query;
 
     public function __construct($model, string $key, N2Search $n2) {
         $this->class = $model;
-        $this->search_key = str_replace(' ', '', trim($key));
+        $this->search_key = mb_strtolower(str_replace(' ', '', trim($key)));
         $this->db = new $this->class;
         $this->n2 = $n2;
+
+        $this->model_primary_key = $this->db->getKeyName();
 
         // 初始化关键词
         $this->initKeys();
@@ -38,7 +41,7 @@ class Find
     }
 
     protected function initKeys() {
-        $keys = DataInteractive::cut($this->search_key, $this->n2->getN2Config()['dict']);
+        $keys = $this->n2->jieba->getTokens($this->search_key);
         $this->keys = $keys;
     }
 
@@ -56,7 +59,7 @@ class Find
         }
         $ids = array_filter($ids);
         $ids = array_unique($ids);
-        $this->query = $this->db->whereIn('id', $ids);
+        $this->query = $this->db->whereIn($this->model_primary_key, $ids);
     }
 
     /**
@@ -67,7 +70,7 @@ class Find
      * @param array $select
      */
     public function columns(array $select) {
-        $base = ['id'];
+        $base = [$this->model_primary_key];
         $select = array_merge($base, $select);
         $this->select = $select;
         $this->query = $this->query->select($select);
@@ -176,7 +179,7 @@ class Find
                 $cluster[$key]['n2_weight'] = 0.0;
             }
             foreach ($this->select as $item) {
-                $analysis = DataInteractive::read($doc['id']."_".$item."_ans", $this->n2);
+                $analysis = DataInteractive::read($doc[$this->model_primary_key]."_".$item."_ans", $this->n2);
                 if (empty($analysis)) {
                     continue;
                 }
