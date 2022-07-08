@@ -8,6 +8,9 @@
 
 namespace N2Search;
 
+use Fukuball\Jieba\Finalseg;
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\JiebaAnalyse;
 use N2Search\Core\Clear;
 use N2Search\Core\Find;
 use N2Search\Core\Load;
@@ -32,6 +35,13 @@ class N2Search
         $this->stop_words = $config['stop_words'];
         $this->dict = $config['dict'];
         $this->pinyin = $config['pinyin'];
+
+        Jieba::init([
+            'dict'      =>  $this->dict,
+            'cjk'       =>  'all'
+        ]);
+        Finalseg::init();
+        JiebaAnalyse::init();
     }
 
     public function load($model, $columns): Load {

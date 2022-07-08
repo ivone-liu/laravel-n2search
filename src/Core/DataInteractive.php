@@ -26,12 +26,6 @@ class DataInteractive
      * @param $html_strap 默认认为content是html标记
      */
     public static function cut($content, $dict, $html_strap = 1) {
-        Jieba::init([
-            'dict'      =>  $dict,
-            'cjk'       =>  'all'
-        ]);
-        Finalseg::init();
-
         if ($html_strap) {
             $content = strip_tags($content);
         }
@@ -50,12 +44,6 @@ class DataInteractive
         if ($strip_html == 1) {
             $content = strip_tags($content);
         }
-        Jieba::init([
-            'dict'      =>  $dict,
-            'cjk'       =>  'all'
-        ]);
-        Finalseg::init();
-        JiebaAnalyse::init();
         return JiebaAnalyse::extractTags($content);
     }
 
