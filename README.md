@@ -89,6 +89,7 @@ return [
     'redis_password'    => env('REDIS_PASSWORD', null), // REDIS密码
     'redis_port'        => env('REDIS_PORT', '6379'), // REDIS端口
     'redis_db'          =>  9, // 给N2Search提供的可用REDIS库
+    'pinyin'            =>  1, // 1启动中文拼音检索 0关闭中文拼音检索
     'dict'              => 'big', // 分词词典，默认big，可选：small
     'job_work'          => 0, // 启用队列支持，可在导入时选用，默认0关闭，可选：1开启
     'stop_words'        =>  [] // 不分词词语配置
@@ -142,6 +143,12 @@ $n2->find(YourModel::class, '我')->columns(['name', 'degree'])->where(['user_id
 $n2->find(YourModel::class, '好的')->columns(['name', 'degree'])->where(['user_id'=>1])->order('id', 'desc')->fetchOne();
 ```
 
+如果使用了`fetchMany()`,后面增加了`data()`方法来返回查询结果的数组,`fetchOne()`不支持。
+```php
+$n2 = new N2Search();
+$n2->find(YourModel::class, '我')->columns(['name', 'degree'])->where(['user_id'=>1])->where(['relation_id'=>101])->page(1, 20)->order('id', 'desc')->fetchMany()->data();
+```
+
 其中
 
 `fetchMany()`表示一次性读取多条数据，如Laravel get()
@@ -177,11 +184,7 @@ php artisan n2search:clear
 ### 🔤 拼音
 参考[开始构建索引](https://github.com/ivone-liu/laravel-n2search#-%E5%BC%80%E5%A7%8B%E6%9E%84%E5%BB%BA%E7%B4%A2%E5%BC%95)
 
-在`addOne()`方法中，第二个参数作为中文转拼音的识别参数，即
-```php
-$n2->load(YourModel::class, ['content'])->addOne($log['id'], 1);
-```
-表示提供拼音转化，并计算生成拼音对应的索引。同样适用于`addBatch(1)`。
+在项目publish之后，config目录下的`N2Search.php`中，`pinyin`一项改为**1**即可，**0**表示不转拼音。
 
 ### 🏳️‍🌈 多语言
 开发中
@@ -203,7 +206,9 @@ $n2->load(YourModel::class, ['content'])->addOne($log['id'], 1);
 开发中
 
 ### 🧮 权重计算
-开发中
+针对关键词的权重计算，不存在于`fetchOne()`场景中，仅对`fetchMany()`增加了对关键词在不同文档中的权重。
+
+在`fetchMany()`方法之后，以链式操作的形式，后面追加`analysis()`方法，可返回关键词在文档中的权重，字段名为`n2_weight`。
 
 ## 🧑🏻‍💻 联系我
 
