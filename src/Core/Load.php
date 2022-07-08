@@ -107,6 +107,7 @@ class Load
             return;
         }
         $sentence = $obj[$column];
+        $sentence = strip_tags($sentence);
         $words = $this->n2->jieba->getTokens($sentence);
         foreach ($words as $word) {
             if (!empty($this->n2_config['pinyin'])) {
