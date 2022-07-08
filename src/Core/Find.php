@@ -27,7 +27,7 @@ class Find
 
     public function __construct($model, string $key, N2Search $n2) {
         $this->class = $model;
-        $this->search_key = str_replace(trim($key), ' ', '');
+        $this->search_key = str_replace(' ', '', trim($key));
         $this->db = new $this->class;
         $this->n2 = $n2;
 
@@ -67,6 +67,8 @@ class Find
      * @param array $select
      */
     public function columns(array $select) {
+        $base = ['id'];
+        $select = array_merge($base, $select);
         $this->select = $select;
         $this->query = $this->query->select($select);
         return $this;
@@ -168,14 +170,23 @@ class Find
         if (empty($this->select)) {
             return $cluster;
         }
+
         foreach ($cluster as $key=>$doc) {
+            if (!array_key_exists('n2_weight', $cluster[$key])) {
+                $cluster[$key]['n2_weight'] = 0.0;
+            }
             foreach ($this->select as $item) {
-                $analysis = DataInteractive::read($doc['id']."_".$item."_ans");
-                foreach ($analysis as $k=>$weight) {
+                $analysis = DataInteractive::read($doc['id']."_".$item."_ans", $this->n2);
+                if (empty($analysis)) {
+                    continue;
+                }
+                $doc_analysis = json_decode($analysis[0], true);
+                foreach ($doc_analysis as $k=>$ana) {
                     if (in_array($k, $this->keys)) {
-                        $cluster[$key]['n2_weight'] += $weight;
+                        $cluster[$key]['n2_weight'] += $ana;
                     }
                 }
+
             }
         }
         return $cluster;
