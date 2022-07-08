@@ -21,6 +21,7 @@ class Find
     protected $n2;
     protected $db;
     protected $select;
+    protected $cluster;
 
     protected $query;
 
@@ -37,7 +38,7 @@ class Find
     }
 
     protected function initKeys() {
-        $keys = Jieba::cutForSearch($this->search_key);
+        $keys = DataInteractive::cut($this->search_key, $this->n2->getN2Config()['dict']);
         $this->keys = $keys;
     }
 
@@ -127,9 +128,19 @@ class Find
      * @return array|mixed
      */
     public function fetchMany() {
-        $cluster = $this->query->get();
-        $cluster = $cluster->isEmpty() ? [] : $cluster->toArray();
-        return $cluster;
+        $this->cluster = $this->query->get();
+        return $this;
+    }
+
+    /**
+     * Desc: 读取
+     * Author: Ivone <i@ivone.me>
+     * Date: 2022/7/8
+     * Time: 8:55
+     * @return array
+     */
+    public function data() {
+        return $this->cluster->isEmpty() ? [] : $this->cluster->toArray();
     }
 
     /**
@@ -140,8 +151,8 @@ class Find
      * @return mixed
      */
     public function fetchOne() {
-        $cluster = $this->query->first();
-        return $cluster;
+        $this->cluster = $this->query->first();
+        return $this->cluster;
     }
 
     /**
@@ -152,21 +163,22 @@ class Find
      * @param $docs
      * @return mixed|void
      */
-    public function getAnalysis($docs) {
+    public function analysis() {
+        $cluster = $this->cluster = $this->cluster->isEmpty() ? [] : $this->cluster->toArray();
         if (empty($this->select)) {
-            return $docs;
+            return $cluster;
         }
-        foreach ($docs as $key=>$doc) {
+        foreach ($cluster as $key=>$doc) {
             foreach ($this->select as $item) {
                 $analysis = DataInteractive::read($doc['id']."_".$item."_ans");
                 foreach ($analysis as $k=>$weight) {
                     if (in_array($k, $this->keys)) {
-                        $docs[$key]['n2_weight'] += $weight;
+                        $cluster[$key]['n2_weight'] += $weight;
                     }
                 }
             }
         }
-        return $docs;
+        return $cluster;
     }
 
 }

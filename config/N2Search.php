@@ -7,7 +7,7 @@ return [
     'redis_db'          =>  9,
 
     'dict'              => 'big',
-
+    'pinyin'            => 0,
     'job_work'          => 0,
 
     'stop_words'        =>  [
