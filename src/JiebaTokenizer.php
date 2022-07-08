@@ -16,7 +16,7 @@ class JiebaTokenizer
 {
     public function __construct()
     {
-        $config = config('jieba');
+        $config = config('N2Search');
 
         Jieba::init([
             'dict'      =>  $config['dict'],
