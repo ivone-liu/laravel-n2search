@@ -23,17 +23,15 @@ class ImportJob implements ShouldQueue
     protected $n2;
     protected $column;
     protected $pk;
-    protected $pinyin;
     protected $need_iteration;
     protected $iteration_obj;
 
-    public function __construct($n2, $db, $column, $pk, $pinyin, $need_iteration, $iteration_obj = [])
+    public function __construct($n2, $db, $column, $pk, $need_iteration, $iteration_obj = [])
     {
         $this->db = $db;
         $this->column = $column;
         $this->n2 = $n2;
         $this->pk = $pk;
-        $this->pinyin = $pinyin;
         $this->need_iteration = $need_iteration;
         $this->iteration_obj = $iteration_obj;
     }
@@ -50,7 +48,7 @@ class ImportJob implements ShouldQueue
     }
 
     protected function add($pk) {
-        $this->n2->load($this->db, $this->column)->addOne($pk, $this->pinyin);
+        $this->n2->load($this->db, $this->column)->addOne($pk);
     }
 
 }

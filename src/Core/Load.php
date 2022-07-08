@@ -43,7 +43,7 @@ class Load
      */
     public function addOne(int $id, $need_queue = 0) {
         if ($need_queue == 1) {
-            ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, $this->n2_config['pinyin'], 0)->onQueue("n2_build");
+            ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, 0)->onQueue("n2_build");
             return;
         }
         $log = $this->db->where(['id'=>$id])->first();
@@ -79,7 +79,7 @@ class Load
             $log = $log->toArray();
 
             if ($need_queue == 1) {
-                ImportJob::dispatch($this->n2, $this->db_class, $this->columns, 0, $this->n2_config['pinyin'], 1, $log)->onQueue("n2_build");
+                ImportJob::dispatch($this->n2, $this->db_class, $this->columns, 0, 1, $log)->onQueue("n2_build");
                 continue;
             }
 

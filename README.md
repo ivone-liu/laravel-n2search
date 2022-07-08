@@ -107,7 +107,7 @@ $bar = $this->output->createProgressBar($count);
 $n2 = new N2Search();
 $logs = YourModel::get()->toArray();
 foreach ($logs as $log) {
-    $n2->load(YourModel::query(), ['content'])->addOne($log['id']);
+    $n2->load(YourModel::class, ['content'])->addOne($log['id']);
     $bar->advance();
 }
 
