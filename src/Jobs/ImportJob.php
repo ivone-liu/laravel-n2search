@@ -19,17 +19,13 @@ class ImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $db;
     protected $n2;
-    protected $column;
     protected $pk;
     protected $need_iteration;
     protected $iteration_obj;
 
-    public function __construct($n2, $db, $column, $pk, $need_iteration, $iteration_obj = [])
+    public function __construct($n2, $pk, $need_iteration, $iteration_obj = [])
     {
-        $this->db = $db;
-        $this->column = $column;
         $this->n2 = $n2;
         $this->pk = $pk;
         $this->need_iteration = $need_iteration;
@@ -48,7 +44,7 @@ class ImportJob implements ShouldQueue
     }
 
     protected function add($pk) {
-        $this->n2->load($this->db, $this->column)->addOne($pk);
+        $this->n2->addOne($pk);
     }
 
 }
