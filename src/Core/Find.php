@@ -59,7 +59,7 @@ class Find
         }
         $ids = array_filter($ids);
         $ids = array_unique($ids);
-        $this->query = $this->db->whereIn($this->model_primary_key, $ids);
+        $this->query = $this->db->whereIn($this->model_primary_key, $ids[0]);
     }
 
     /**
