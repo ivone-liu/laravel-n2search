@@ -41,9 +41,9 @@ class Load
      * key:{1,2,3,4,5}
      *
      */
-    public function addOne(int $id, $need_pinyin = 0, $need_queue = 0) {
+    public function addOne(int $id, $need_queue = 0) {
         if ($need_queue == 1) {
-            ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, $need_pinyin, 0)->onQueue("n2_build");
+            ImportJob::dispatch($this->n2, $this->db_class, $this->columns, $id, $this->n2_config['pinyin'], 0)->onQueue("n2_build");
             return;
         }
         $log = $this->db->where(['id'=>$id])->first();
@@ -64,7 +64,7 @@ class Load
      * @param $model
      * @param $columns
      */
-    public function addBatch($need_pinyin = 0, $need_queue = 0) {
+    public function addBatch($need_queue = 0) {
         $base = ['id'];
         $this->columns = array_unique(array_merge($base, $this->columns));
 
@@ -79,7 +79,7 @@ class Load
             $log = $log->toArray();
 
             if ($need_queue == 1) {
-                ImportJob::dispatch($this->n2, $this->db_class, $this->columns, 0, $need_pinyin, 1, $log)->onQueue("n2_build");
+                ImportJob::dispatch($this->n2, $this->db_class, $this->columns, 0, $this->n2_config['pinyin'], 1, $log)->onQueue("n2_build");
                 continue;
             }
 
@@ -107,7 +107,7 @@ class Load
         $sentence = $obj[$column];
         $words = DataInteractive::cut($sentence, $this->n2_config['dict']);
         foreach ($words as $word) {
-            if (!empty($need_pinyin)) {
+            if (!empty($this->n2_config['pinyin'])) {
                 $pinyin_cut = $this->pinyin($word);
                 DataInteractive::add(implode('', $pinyin_cut), $word, $this->n2);
             }
